@@ -28,8 +28,8 @@ jobs:
       - name: Start MLflow Tracking Server
         run: |
           mlflow server --host 127.0.0.1 --port 5000 &
-          sleep 5
+          sleep 10
 
       - name: Execute MLflow Project Workflow
         run: |
-          mlflow run MLProject --env-manager=local --experiment-name="Diabetes_Prediction_Classification"
+          mlflow run MLProject --env-manager=local --experiment-name="Wine_Quality_Classification"

@@ -1,5 +1,5 @@
 """
-Script Pelatihan Model Klasifikasi Prediksi Diabetes dengan Tracking MLflow.
+Script Pelatihan Model Klasifikasi Kualitas Wine dengan Tracking MLflow.
 
 Penggunaan:
     python modelling.py --n_estimators 150 --max_depth 6
@@ -9,7 +9,6 @@ import os
 import sys
 import warnings
 import argparse
-import urllib.request
 import numpy as np
 import pandas as pd
 import mlflow
@@ -22,23 +21,8 @@ from sklearn.metrics import (
 # Abaikan peringatan yang tidak relevan
 warnings.filterwarnings("ignore")
 
-SERVER_URI = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
-NAMA_EKSPERIMEN = "Diabetes_Prediction_Classification"
-
-
-def inisialisasi_mlflow():
-    """Hubungkan ke MLflow tracking server jika aktif, atau gunakan pencatatan lokal."""
-    try:
-        urllib.request.urlopen(SERVER_URI, timeout=2)
-        mlflow.set_tracking_uri(SERVER_URI)
-        print(f"✅ Terhubung ke MLflow Tracking Server di {SERVER_URI}")
-    except Exception:
-        print(f"ℹ️ Tracking server tidak terjangkau di {SERVER_URI}. Menggunakan penyimpanan lokal ./mlruns")
-    
-    try:
-        mlflow.set_experiment(NAMA_EKSPERIMEN)
-    except Exception as err:
-        print(f"Catatan eksperimen MLflow: {err}")
+SERVER_URI = "http://127.0.0.1:5000"
+NAMA_EKSPERIMEN = "Wine_Quality_Classification"
 
 
 def hitung_metrik_evaluasi(y_asli: np.ndarray, y_pred: np.ndarray) -> dict:
@@ -67,8 +51,14 @@ def muat_dataset_preprocessed():
 
 def latih_dan_catat_model(n_est: int, kedalaman: int):
     """Melatih RandomForestClassifier dan mencatat artefak ke MLflow."""
-    inisialisasi_mlflow()
     X_tr, X_te, y_tr, y_te = muat_dataset_preprocessed()
+
+    # Inisialisasi Server Tracking MLflow
+    try:
+        mlflow.set_tracking_uri(SERVER_URI)
+        mlflow.set_experiment(NAMA_EKSPERIMEN)
+    except Exception as e:
+        print(f"Catatan MLflow tracking URI: {e}")
 
     # Aktifkan pencatatan otomatis MLflow
     mlflow.autolog(log_models=True)
@@ -88,7 +78,7 @@ def latih_dan_catat_model(n_est: int, kedalaman: int):
         garis_sama = "═" * 50
         garis_strip = "─" * 50
         print(f"\n{garis_sama}")
-        print("  Hasil Evaluasi Model Diabetes (Random Forest)")
+        print("  Hasil Evaluasi Model Random Forest")
         print(f"  • n_estimators : {n_est}")
         print(f"  • max_depth    : {kedalaman}")
         print(garis_strip)
@@ -98,7 +88,7 @@ def latih_dan_catat_model(n_est: int, kedalaman: int):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Pelatihan Model Prediksi Diabetes")
+    parser = argparse.ArgumentParser(description="Pelatihan Model Kualitas Wine")
     parser.add_argument("--n_estimators", type=int, default=100, help="Jumlah pohon")
     parser.add_argument("--max_depth",    type=int, default=5,   help="Kedalaman maksimal pohon")
     opsi = parser.parse_args()

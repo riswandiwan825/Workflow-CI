@@ -1,5 +1,5 @@
 """
-Script Hyperparameter Tuning Model Klasifikasi Prediksi Diabetes dengan GridSearchCV & MLflow.
+Script Hyperparameter Tuning Model Klasifikasi Kualitas Wine dengan GridSearchCV & MLflow.
 """
 
 import os
@@ -10,8 +10,8 @@ import mlflow.sklearn
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
 
-TRACKING_URI    = "http://127.0.0.1:5000"
-NAMA_EKSPERIMEN = "Diabetes_Prediction_Classification"
+TRACKING_URI    = "http://localhost:5000"
+NAMA_EKSPERIMEN = "Wine_Quality_Classification"
 
 
 def jalankan_tuning():
@@ -33,7 +33,7 @@ def jalankan_tuning():
         'criterion':    ['gini', 'entropy']
     }
 
-    print("🔎 Memulai proses hyperparameter tuning (Diabetes Model)...")
+    print("🔎 Memulai proses hyperparameter tuning...")
     with mlflow.start_run(run_name="GridSearch_Hyperparameter_Tuning"):
         estimator_base = RandomForestClassifier(random_state=42)
         grid_search = GridSearchCV(
