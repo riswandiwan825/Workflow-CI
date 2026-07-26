@@ -1,3 +1,3 @@
 ﻿# Workflow-CI
 
-Automated Retraining Workflow - Riswandi
+Automated Model Retraining Pipeline (GitHub Actions)
