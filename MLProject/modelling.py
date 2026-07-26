@@ -1,5 +1,5 @@
 """
-Script Pelatihan Model Klasifikasi Kualitas Wine dengan Tracking MLflow.
+Script Pelatihan Model Klasifikasi Prediksi Diabetes dengan Tracking MLflow.
 
 Penggunaan:
     python modelling.py --n_estimators 150 --max_depth 6
@@ -22,7 +22,7 @@ from sklearn.metrics import (
 warnings.filterwarnings("ignore")
 
 SERVER_URI = "http://127.0.0.1:5000"
-NAMA_EKSPERIMEN = "Wine_Quality_Classification"
+NAMA_EKSPERIMEN = "Diabetes_Prediction_Classification"
 
 
 def hitung_metrik_evaluasi(y_asli: np.ndarray, y_pred: np.ndarray) -> dict:
@@ -78,7 +78,7 @@ def latih_dan_catat_model(n_est: int, kedalaman: int):
         garis_sama = "═" * 50
         garis_strip = "─" * 50
         print(f"\n{garis_sama}")
-        print("  Hasil Evaluasi Model Random Forest")
+        print("  Hasil Evaluasi Model Diabetes (Random Forest)")
         print(f"  • n_estimators : {n_est}")
         print(f"  • max_depth    : {kedalaman}")
         print(garis_strip)
@@ -88,7 +88,7 @@ def latih_dan_catat_model(n_est: int, kedalaman: int):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Pelatihan Model Kualitas Wine")
+    parser = argparse.ArgumentParser(description="Pelatihan Model Prediksi Diabetes")
     parser.add_argument("--n_estimators", type=int, default=100, help="Jumlah pohon")
     parser.add_argument("--max_depth",    type=int, default=5,   help="Kedalaman maksimal pohon")
     opsi = parser.parse_args()

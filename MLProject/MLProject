@@ -1,4 +1,4 @@
-name: Wine_Quality_Classification
+name: Diabetes_Prediction_Classification
 
 conda_env: conda.yaml
 
