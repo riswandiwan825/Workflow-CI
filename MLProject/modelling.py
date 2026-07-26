@@ -9,6 +9,7 @@ import os
 import sys
 import warnings
 import argparse
+import urllib.request
 import numpy as np
 import pandas as pd
 import mlflow
@@ -21,8 +22,23 @@ from sklearn.metrics import (
 # Abaikan peringatan yang tidak relevan
 warnings.filterwarnings("ignore")
 
-SERVER_URI = "http://127.0.0.1:5000"
+SERVER_URI = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:5000")
 NAMA_EKSPERIMEN = "Diabetes_Prediction_Classification"
+
+
+def inisialisasi_mlflow():
+    """Hubungkan ke MLflow tracking server jika aktif, atau gunakan pencatatan lokal."""
+    try:
+        urllib.request.urlopen(SERVER_URI, timeout=2)
+        mlflow.set_tracking_uri(SERVER_URI)
+        print(f"✅ Terhubung ke MLflow Tracking Server di {SERVER_URI}")
+    except Exception:
+        print(f"ℹ️ Tracking server tidak terjangkau di {SERVER_URI}. Menggunakan penyimpanan lokal ./mlruns")
+    
+    try:
+        mlflow.set_experiment(NAMA_EKSPERIMEN)
+    except Exception as err:
+        print(f"Catatan eksperimen MLflow: {err}")
 
 
 def hitung_metrik_evaluasi(y_asli: np.ndarray, y_pred: np.ndarray) -> dict:
@@ -51,14 +67,8 @@ def muat_dataset_preprocessed():
 
 def latih_dan_catat_model(n_est: int, kedalaman: int):
     """Melatih RandomForestClassifier dan mencatat artefak ke MLflow."""
+    inisialisasi_mlflow()
     X_tr, X_te, y_tr, y_te = muat_dataset_preprocessed()
-
-    # Inisialisasi Server Tracking MLflow
-    try:
-        mlflow.set_tracking_uri(SERVER_URI)
-        mlflow.set_experiment(NAMA_EKSPERIMEN)
-    except Exception as e:
-        print(f"Catatan MLflow tracking URI: {e}")
 
     # Aktifkan pencatatan otomatis MLflow
     mlflow.autolog(log_models=True)
