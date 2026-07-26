@@ -1,0 +1,35 @@
+﻿name: Automated Model Retraining Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  retrain:
+    name: Train and Log Model
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Configure Python Environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Project Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r MLProject/requirements.txt
+
+      - name: Start MLflow Tracking Server
+        run: |
+          mlflow server --host 127.0.0.1 --port 5000 &
+          sleep 10
+
+      - name: Execute MLflow Project Workflow
+        run: |
+          mlflow run MLProject --env-manager=local --experiment-name="Wine_Quality_Classification"
